@@ -44,6 +44,14 @@ inputs:
       is_expand: true
       is_required: true
       value_options: []
+  - config_version: $BITRISEIO_IXGUARD_CONFIG_VERSION
+    opts:
+      title: iXGuard config
+      summary: Version of the iXGuard config to use 
+      description:  Should be <name>@<version>, Version of the iXGuard config to use (see https://platform.guardsquare.com/teams/a121a04b-d008-43f6-a5a2-9b7192e8e727/apps/b489f7ac-98be-4927-8f98-6649317cffb6/configuration).
+      is_expand: true
+      is_required: false
+      value_options: []
 outputs:
   - PROTECTED_ARCHIVE:
     opts:
