@@ -29,14 +29,6 @@ toolkit:
   bash:
     entry_file: step.sh
 inputs:
-  - license_url: $BITRISEIO_IXGUARD_LICENSE_URL
-    opts:
-      title: iXGuard license file url
-      summary: Text file containing licenses.
-      description: Can be downloaded from your Guardsquare account and uploaded to Bitrise.
-      is_expand: true
-      is_required: true
-      value_options: []
   - archive_path: $BITRISE_XCARCHIVE_PATH
     opts:
       title: Unprotected xcarchive
