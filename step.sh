@@ -31,7 +31,7 @@ else
 fi
 
 # Process the unprotected xcarchive
-guardsquare protect --ssh-agent --no-browser -o "$PROTECTED_ARCHIVE" --force-license-sync --config "$CONFIG_VERSION" "$BITRISE_XCARCHIVE_PATH"
+guardsquare protect --ssh-agent --no-browser -o "$IXGUARD_GENERATED_FILES_DIRECTORY/$PROTECTED_ARCHIVE" --force-license-sync --config "$CONFIG_VERSION" --out-dir "$IXGUARD_GENERATED_FILES_DIRECTORY" "$BITRISE_XCARCHIVE_PATH"
 
 # Make the protected archive available from outside this Step
 envman add --key PROTECTED_ARCHIVE --value "$(realpath $PROTECTED_ARCHIVE)"
