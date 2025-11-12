@@ -1,9 +1,10 @@
-format_version: 4
+format_version: "4"
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 workflows:
-  sample-workflow:
+  test:
     steps:
       - path::./:
           inputs:
-            - config_version: production@latest 
+            - guardsquare_ssh_key: $GUARDSQUARE_SSH_KEY
+            - guardsquare_config_version: "production@latest"

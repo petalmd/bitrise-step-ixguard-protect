@@ -1,39 +1,48 @@
 #!/bin/bash
 set -e
 
-KEY_PATH="$HOME/.ssh/protected_ixguard_key"
-SSH_KEY_FILE_URL=${ssh_key_file}
-SSH_KEY_PASSPHRASE=${ssh_key_passphrase}
+KEY_PATH="$HOME/.ssh/id_guardsquare"
 
-PROTECTED_ARCHIVE="protected.xcarchive"
-IXGUARD_GENERATED_FILES_DIRECTORY="ixguard-files"
-CONFIG_VERSION=${config_version}
+GUARDSQUARE_SSH_KEY=${guardsquare_ssh_key}
 
-if [ -n "$SSH_KEY_FILE_URL" ] && [ -n "$SSH_KEY_PASSPHRASE" ]; then
-    mkdir -p "$HOME/.ssh"
+GUARDSQUARE_CONFIG_VERSION=${guardsquare_config_version:-"production@latest"}
+PROTECTED_APP_NAME=${protected_app_name}
 
-    curl -fSL "$SSH_KEY_FILE_URL" -o "$KEY_PATH"
-    chmod 600 "$KEY_PATH"
-
-    eval "$(ssh-agent -s)"
-
-    expect <<EOF
-set timeout -1
-spawn ssh-add "$KEY_PATH"
-expect "Enter passphrase for"
-send "$SSH_KEY_PASSPHRASE\r"
-expect eof
-EOF
-
+# Auto-detect app path from Bitrise environment variables
+if [[ -n "${app_path}" ]]; then
+    APP_PATH="${app_path}"
+elif [[ -n "${BITRISE_XCARCHIVE_PATH}" ]]; then
+    APP_PATH="${BITRISE_XCARCHIVE_PATH}"
+    PROTECTED_APP_NAME=${PROTECTED_APP_NAME:-"protected.xcarchive"}
+elif [[ -n "${BITRISE_APK_PATH}" ]]; then
+    APP_PATH="${BITRISE_APK_PATH}"
+    PROTECTED_APP_NAME=${PROTECTED_APP_NAME:-"protected.apk"}
+elif [[ -n "${BITRISE_AAB_PATH}" ]]; then
+    APP_PATH="${BITRISE_AAB_PATH}"
+    PROTECTED_APP_NAME=${PROTECTED_APP_NAME:-"protected.aab"}
 else
-    echo "SSH key for iXGuard access is missing."
+    echo "Error: No app path found. Set app_path input or ensure BITRISE_XCARCHIVE_PATH, BITRISE_APK_PATH, or BITRISE_AAB_PATH is available."
     exit 1
 fi
 
-# Process the unprotected xcarchive
-guardsquare protect --ssh-agent --no-browser -o "$PROTECTED_ARCHIVE" --force-license-sync --config "$CONFIG_VERSION" --out-dir "$BITRISE_DEPLOY_DIR" "$BITRISE_XCARCHIVE_PATH"
+echo "Using app path: $APP_PATH"
+echo "Using protected app name: $PROTECTED_APP_NAME"
+echo "Using guardsquare config version: $GUARDSQUARE_CONFIG_VERSION"
 
-# Make the protected archive available from outside this Step
-envman add --key PROTECTED_ARCHIVE --value "$(realpath $BITRISE_DEPLOY_DIR/$PROTECTED_ARCHIVE)"
+mkdir -p "$HOME/.ssh"
+
+echo "$GUARDSQUARE_SSH_KEY" > "$KEY_PATH"
+chmod 600 "$KEY_PATH"
+
+eval "$(ssh-agent -s)"
+
+ssh-add "$KEY_PATH"
+
+
+# Process the app
+guardsquare protect --ssh-agent --no-browser --force-license-sync --config "$GUARDSQUARE_CONFIG_VERSION" --out-dir "$BITRISE_DEPLOY_DIR" -o "$PROTECTED_APP_NAME" "$APP_PATH"
+
+# Make the protected app available from outside this Step
+envman add --key PROTECTED_APP_PATH --value "$(realpath $BITRISE_DEPLOY_DIR/$PROTECTED_APP_NAME)"
 
 exit 0
