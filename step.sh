@@ -40,6 +40,12 @@ ssh-add "$KEY_PATH"
 
 
 # Process the app
+if ! command -v guardsquare >/dev/null 2>&1; then
+    echo "Guardsquare CLI not found, installing..."
+    curl -sS https://platform.guardsquare.com/cli/install.sh | sh -s -- --yes
+fi
+
+echo "Protecting app..."
 guardsquare protect --ssh-agent --no-browser --force-license-sync --config "$GUARDSQUARE_CONFIG_VERSION" --out-dir "$BITRISE_DEPLOY_DIR" -o "$PROTECTED_APP_NAME" "$APP_PATH"
 
 # Make the protected app available from outside this Step
