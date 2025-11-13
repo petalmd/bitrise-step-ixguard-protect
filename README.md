@@ -11,9 +11,14 @@ Protect your app archive before export to take advantage of the advanced securit
 
 Before you start:
 
-- You will need to have installed Guardsquare CLI to the workspace
 - Make sure you have a valid Guardsquare configuration
 - Add your Guardsquare SSH key to the environment secrets
+
+The step automatically:
+
+- Installs Guardsquare CLI if not already present
+- Sets up SSH authentication using ssh-agent
+- Detects app paths from Bitrise environment variables
 
 To configure the Step:
 
@@ -28,6 +33,18 @@ The step automatically detects:
 
 - **App Path**: Uses `$BITRISE_XCARCHIVE_PATH` (iOS), `$BITRISE_APK_PATH` (Android APK), or `$BITRISE_AAB_PATH` (Android AAB)
 - **Protected App Name**: Defaults to `protected.xcarchive`, `protected.apk`, or `protected.aab` based on the detected app type
+
+### How It Works
+
+1. **SSH Setup**: Creates SSH key at `~/.ssh/id_guardsquare` with secure permissions (600) and configures ssh-agent
+2. **CLI Installation**: Checks for Guardsquare CLI and auto-installs from `https://platform.guardsquare.com/cli/install.sh` if missing
+3. **App Detection**: Prioritizes manual `app_path` input, then checks Bitrise environment variables in order
+4. **Protection**: Runs `guardsquare protect` with flags:
+   - `--ssh-agent`: Uses ssh-agent for authentication
+   - `--no-browser`: Runs in non-interactive mode
+   - `--force-license-sync`: Ensures license validation
+   - `--out-dir $BITRISE_DEPLOY_DIR`: Outputs to Bitrise deploy directory
+5. **Output**: Exports `PROTECTED_APP_PATH` environment variable with full path to protected app
 
 </details>
 
