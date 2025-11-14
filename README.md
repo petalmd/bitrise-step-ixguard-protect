@@ -43,8 +43,12 @@ The step automatically detects:
    - `--ssh-agent`: Uses ssh-agent for authentication
    - `--no-browser`: Runs in non-interactive mode
    - `--force-license-sync`: Ensures license validation
+   - `--jvmargs "-Ddisable.zip64.support"`: Disables ZIP64 support for compatibility
    - `--out-dir $BITRISE_DEPLOY_DIR`: Outputs to Bitrise deploy directory
-5. **Output**: Exports `PROTECTED_APP_PATH` environment variable with full path to protected app
+5. **Scanning**: Runs `guardsquare scan` on the protected app with mapping file
+   - Non-blocking: Scan failures only show a warning and don't fail the pipeline
+   - Useful for security analysis and vulnerability detection
+6. **Output**: Exports `PROTECTED_APP_PATH` environment variable with full path to protected app
 
 </details>
 

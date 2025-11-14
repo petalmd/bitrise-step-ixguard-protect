@@ -48,7 +48,12 @@ fi
 echo "Protecting app..."
 guardsquare protect --ssh-agent --no-browser --force-license-sync --jvmargs "-Ddisable.zip64.support" --config "$GUARDSQUARE_CONFIG_VERSION" --out-dir "$BITRISE_DEPLOY_DIR" -o "$PROTECTED_APP_NAME" "$APP_PATH"
 
-# Make the protected app available from outside this Step
+echo "Scanning app..."
+if ! guardsquare scan "$PROTECTED_APP_NAME" --mapping-file "$BITRISE_DEPLOY_DIR/mapping.txt"; then
+    echo "Warning: Guardsquare scan failed"
+fi
+
 envman add --key PROTECTED_APP_PATH --value "$(realpath $BITRISE_DEPLOY_DIR/$PROTECTED_APP_NAME)"
+echo "Env PROTECTED_APP_PATH is available with value: $(realpath $BITRISE_DEPLOY_DIR/$PROTECTED_APP_NAME)"
 
 exit 0
