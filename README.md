@@ -102,7 +102,7 @@ workflows:
           inputs:
             - variant: release
             - build_type: aab
-      - git::https://github.com/npinney/bitrise-step-ixguard-protect.git@main:
+      - git::https://github.com/petalmd/bitrise-step-ixguard-protect.git@main:
           inputs:
             - guardsquare_ssh_key: $GUARDSQUARE_SSH_KEY
             # Uses $BITRISE_AAB_PATH automatically
