@@ -1,23 +1,14 @@
-title: iXGuard Protect
-summary: Protect your iOS archive with iXGuard.
+title: Guardsquare Protect
+summary: Protect App with Guardsquare.
 description: |-
-  Protect your app archive before export to take advantage of the advanced security features offered by iXGuard.
+  Protect your app archive before export to take advantage of the advanced security features offered by Guardsquare.
 
-  ### Configuring the Step
-
-  Before you start:
-    - You will need to have installed iXGuard to the workspace. This can be done using the Step [Install iXGuard](https://github.com/npinney/bitrise-step-install-ixguard)
-    - Make sure at the root of your project there can be found a valid `ixguard.yml` configuration file.
-
-  To configure the Step:
-
-  1. *License Url*: Specifies a url for where the iXGuard license file can be downloaded.
-  2. *Archive Path*: Specifies the xcarchive that should be protected with iXGuard.
 website: https://github.com/npinney/bitrise-step-ixguard-protect
 source_code_url: https://github.com/npinney/bitrise-step-ixguard-protect
 support_url: https://github.com/npinney/bitrise-step-ixguard-protect/issues
 project_type_tags:
   - ios
+  - android
   - react-native
 type_tags:
   - utility
@@ -29,29 +20,49 @@ toolkit:
   bash:
     entry_file: step.sh
 inputs:
-  - license_url: $BITRISEIO_IXGUARD_LICENSE_URL
+  - guardsquare_ssh_key: $GUARDSQUARE_SSH_KEY
     opts:
-      title: iXGuard license file url
-      summary: Text file containing licenses.
-      description: Can be downloaded from your Guardsquare account and uploaded to Bitrise.
+      title: SSH Key from Guardsquare
+      summary: Private key register in env secrets for Guardsquare.
+      description: |- 
+        The private key should be registered in env secrets for Guardsquare.
       is_expand: true
       is_required: true
       value_options: []
-  - archive_path: $BITRISE_XCARCHIVE_PATH
+  - guardsquare_config_version: "production@latest"
     opts:
-      title: Unprotected xcarchive
-      summary: Path to the unportected and built-with-ixgaurd-toolchain xcarchive file that iXGuard will process.
+      title: Guardsquare Config Version
+      summary: Version of the Guardsquare configuration to use.
+      description: |-
+        Specifies the Guardsquare configuration version to apply during protection.
+        Defaults to "production@latest" if not provided.
       is_expand: true
-      is_required: true
+      is_required: false
+      value_options: []
+  - protected_app_name:
+    opts:
+      title: Protected App Name
+      summary: Name of the protected app output file.
+      description: |-
+        Name for the protected app file that will be generated.
+      is_expand: true
+      is_required: false
+      value_options: []
+  - app_path:
+    opts:
+      title: App path
+      summary: Path to the app to protect (optional, auto-detected if not provided).
+      description: |-
+        Path to the app to protect. If not provided, automatically detects from:
+        - $BITRISE_XCARCHIVE_PATH (iOS)
+        - $BITRISE_APK_PATH (Android APK)
+        - $BITRISE_AAB_PATH (Android AAB)
+      is_expand: true
+      is_required: false
       value_options: []
 outputs:
-  - PROTECTED_ARCHIVE:
+  - PROTECTED_APP_PATH:
     opts:
-      title: Protected app archive
-      summary: Path to the obfuscated and encrypted xcarchive.
-      description: Replaces the unprotected xcarchive in the artifacts section after successfull processing. Contains dSYMs.
-  - IXGUARD_GENERATED_FILES:
-    opts:
-      title: iXGuard generated files
-      summary: During iXGuard processing, the mapping and log files among others are grouped and compressed.
-      description: When paired with the Deploy to Bitrise.ios Step they are made available in the artifacts section of the build.
+      title: Protected app
+      summary: Path to the protected app.
+      description: Replaces the unprotected app in the artifacts section after successfull processing.
