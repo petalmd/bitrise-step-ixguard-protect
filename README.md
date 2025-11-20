@@ -70,7 +70,7 @@ workflows:
       - xcode-archive@5:
           inputs:
             - configuration: Release
-      - git::https://github.com/npinney/bitrise-step-ixguard-protect.git@main:
+      - git::https://github.com/petalmd/bitrise-step-ixguard-protect.git@main:
           inputs:
             - guardsquare_ssh_key: $GUARDSQUARE_SSH_KEY
             - guardsquare_config_version: "production@latest"
