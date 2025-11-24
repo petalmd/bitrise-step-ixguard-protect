@@ -49,7 +49,7 @@ echo "Protecting app..."
 guardsquare protect --ssh-agent --no-browser --force-license-sync --jvmargs "-Ddisable.zip64.support" --config "$GUARDSQUARE_CONFIG_VERSION" --out-dir "$BITRISE_DEPLOY_DIR" -o "$PROTECTED_APP_NAME" "$APP_PATH"
 
 echo "Scanning app..."
-if ! guardsquare scan "$PROTECTED_APP_NAME" --ssh-agent --mapping-file "$BITRISE_DEPLOY_DIR/mapping.txt"; then
+if ! guardsquare scan "$BITRISE_DEPLOY_DIR/$PROTECTED_APP_NAME" --ssh-agent --mapping-file "$BITRISE_DEPLOY_DIR/mapping.txt"; then
     echo "Warning: Guardsquare scan failed"
 fi
 
